@@ -1,0 +1,37 @@
+{% load static %}
+{% block content %}
+<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="description" content="Colo Shop Template">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap4/bootstrap.min.css' %}">
+	<link rel="stylesheet" type="text/css" href="{% static 'plugins/font-awesome-4.7.0/css/font-awesome.min.css' %}">
+	<link rel="stylesheet" type="text/css" href="{% static 'plugins/OwlCarousel2-2.2.1/owl.carousel.css' %}">
+	<link rel="stylesheet" type="text/css" href="{% static 'plugins/OwlCarousel2-2.2.1/owl.theme.default.css' %}">
+	<link rel="stylesheet" type="text/css" href="{% static 'plugins/OwlCarousel2-2.2.1/animate.css' %}">
+	<link rel="stylesheet" type="text/css" href="{% static 'css/main_styles.css' %}">
+	<link rel="stylesheet" type="text/css" href="{% static 'css/responsive.css' %}">
+</meta>
+<!-- Header -->
+{% include 'navbar.html' %}
+
+<div class="container text-center mt-5 mb-5" style="padding-top: 80px;">
+    <div class="row">
+        <div class="col-12">
+            <div class="p-5">
+                <h1 class="text-success"><i class="fa fa-check-circle"></i> Payment Successful</h1>
+                <p class="mt-3">Thank you for your purchase! You will be redirected to the home page in 5 seconds.</p>
+                <div class="mt-3">
+                    <a href="{% url 'home' %}" class="btn btn-primary">Return to Home Page</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    setTimeout(function() {
+        window.location.href = "{% url 'home' %}";
+    }, 5000);
+</script>
+{% endblock %}

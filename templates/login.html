@@ -1,0 +1,147 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<title>Contact Us</title>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="description" content="Techie Shop Template">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap4/bootstrap.min.css' %}">
+	<link rel="stylesheet" type="text/css" href="{% static 'plugins/font-awesome-4.7.0/css/font-awesome.min.css' %}">
+	<link rel="stylesheet" type="text/css" href="{% static 'plugins/OwlCarousel2-2.2.1/owl.carousel.css' %}">
+	<link rel="stylesheet" type="text/css" href="{% static 'plugins/OwlCarousel2-2.2.1/owl.theme.default.css' %}">
+	<link rel="stylesheet" type="text/css" href="{% static 'plugins/OwlCarousel2-2.2.1/animate.css' %}">
+	<link rel="stylesheet" href="{% static 'plugins/themify-icons/themify-icons.css' %}">
+	<link rel="stylesheet" type="text/css" href="{% static 'plugins/jquery-ui-1.12.1.custom/jquery-ui.css' %}">
+	<link rel="stylesheet" type="text/css" href="{% static 'css/contact_styles.css' %}">
+	<link rel="stylesheet" type="text/css" href="{% static 'css/contact_responsive.css' %}">
+	<style>
+		.nav-pills .nav-link {
+			color: #fe4c50;
+			background-color: #fff;
+			border: 1px solid #fe4c50;
+			transition: all 0.3s ease;
+		}
+
+		.nav-pills .nav-link.active,
+		.nav-pills .show>.nav-link {
+			color: #fff !important;
+			background-color: #fe4c50 !important;
+			border-color: #fe4c50;
+		}
+
+		.btn-primary {
+			color: #fff !important;
+			background-color: #fe4c50 !important;
+			border-color: #fe4c50 !important;
+		}
+
+		.btn-primary:hover,
+		.btn-primary:focus {
+			background-color: #e43a3e !important;
+			border-color: #e43a3e !important;
+		}
+
+		.nav-pills .nav-link:hover:not(.active) {
+			background-color: rgba(254, 76, 80, 0.1);
+		}
+	</style>
+</head>
+
+<body>
+
+	<div class="super_container">
+
+		<!-- Header -->
+
+		{% include 'navbar.html' %}
+		{% if messages %}
+		{% for message in messages %}
+		<div class="alert alert-warning alert-dismissible fade show" role="alert">
+			{{ message }}
+			<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+				<span aria-hidden="true">&times;</span>
+			</button>
+		</div>
+		{% endfor %}
+		{% endif %}
+
+		<!-- Pills navs -->
+		<div class="container" id="login-nav">
+			<div class="row justify-content-center">
+				<div class="col-md-8 col-lg-6">
+					<ul class="nav nav-pills nav-justified mb-3" id="ex1" role="tablist">
+						<li class="nav-item" role="presentation">
+							<a class="nav-link {% if active_tab == 'login' %}active{% endif %}" id="tab-login" data-mdb-pill-init href="{% url 'login' %}"
+								role="tab" aria-controls="pills-login" aria-selected="true">Login</a>
+						</li>
+						<li class="nav-item" role="presentation">
+							<a class="nav-link {% if active_tab == 'register' %}active{% endif %}" id="tab-register" data-mdb-pill-init href="{% url 'register' %}"
+								role="tab" aria-controls="pills-register" aria-selected="false">Register</a>
+						</li>
+					</ul>
+					<!-- Pills navs -->
+
+					<!-- Pills content -->
+					<div class="tab-content">
+						<div class="tab-pane fade {% if active_tab == 'login' %}show active{% endif %}" id="pills-login" role="tabpanel"
+							aria-labelledby="tab-login">
+							<form method="POST" action="{% url 'login' %}">
+								{% csrf_token %}
+								<!-- Email input -->
+								<div data-mdb-input-init class="form-outline mb-4">
+									<input type="text" id="loginName" class="form-control" name="username" />
+									<label class="form-label" for="loginName">Username</label>
+								</div>
+
+								<!-- Password input -->
+								<div data-mdb-input-init class="form-outline mb-4">
+									<input type="password" id="loginPassword" class="form-control" name="password" />
+									<label class="form-label" for="loginPassword">Password</label>
+								</div>
+
+				
+
+								<!-- Submit button -->
+								<button type="submit" data-mdb-button-init data-mdb-ripple-init
+									class="btn btn-primary btn-block mb-4">Sign In</button>
+
+								<!-- Register buttons -->
+								<div class="text-center">
+									<p>Not a member? <a href="{% url 'register' %}">Register</a></p>
+								</div>
+							</form>
+						</div>
+						<div class="tab-pane fade {% if active_tab == 'register' %}show active{% endif %}" id="pills-register" role="tabpanel" aria-labelledby="tab-register">
+							<form method="POST" action="{% url 'register' %}">
+								{% csrf_token %}
+								{{ form.as_p }}
+
+								<!-- Submit button -->
+								<button type="submit" data-mdb-button-init data-mdb-ripple-init
+									class="btn btn-primary btn-block mb-3">Sign Up</button>
+							</form>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- Pills content -->
+	</div>
+
+	<script src="{% static 'js/jquery-3.2.1.min.js' %}"></script>
+	<script src="{% static 'css/bootstrap4/popper.js' %}"></script>
+	<script src="{% static 'styles/bootstrap4/bootstrap.min.js' %}"></script>
+	<script src="{% static 'plugins/Isotope/isotope.pkgd.min.js' %}"></script>
+	<script src="{% static 'plugins/OwlCarousel2-2.2.1/owl.carousel.js' %}"></script>
+	<script src="{% static 'plugins/easing/easing.js' %}"></script>
+	<script src="{% static 'plugins/jquery-ui-1.12.1.custom/jquery-ui.js' %}"></script>
+	<script src="{% static 'js/contact_custom.js' %}"></script>
+	<script src="{% static 'js/login_custom.js' %}"></script>
+
+</body>
+
+</html>

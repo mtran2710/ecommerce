@@ -1,0 +1,293 @@
+{% load static %}
+
+<style>
+    /* Cart Overlay Styles */
+    .cart_overlay {
+        position: fixed;
+        top: 0;
+        right: -400px;
+        /* Start off-screen */
+        width: 400px;
+        height: 100%;
+        background-color: white;
+        z-index: 1000;
+        box-shadow: -2px 0 5px rgba(0, 0, 0, 0.2);
+        transition: right 0.3s ease-in-out;
+        overflow-y: auto;
+    }
+
+    .cart_overlay.active {
+        right: 0;
+        /* Slide in */
+    }
+
+    .cart_overlay_content {
+        padding: 20px;
+    }
+
+    .cart_overlay_header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding-bottom: 15px;
+        border-bottom: 1px solid #eee;
+        margin-bottom: 20px;
+    }
+
+    .cart_overlay_close {
+        cursor: pointer;
+        font-size: 20px;
+    }
+
+    .cart_item {
+        display: flex;
+        padding: 15px 0;
+        border-bottom: 1px solid #eee;
+    }
+
+    .cart_item_image {
+        width: 80px;
+        height: 80px;
+        margin-right: 15px;
+    }
+
+    .cart_item_image img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+    }
+
+    .cart_item_info {
+        flex: 1;
+    }
+
+    .cart_item_name {
+        font-weight: bold;
+        margin-bottom: 5px;
+    }
+
+    .cart_item_price {
+        color: #fe4c50;
+        margin-bottom: 10px;
+    }
+
+    .cart_item_quantity {
+        display: flex;
+        align-items: center;
+    }
+
+    .quantity_btn {
+        width: 25px;
+        height: 25px;
+        background-color: #f2f2f2;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        cursor: pointer;
+        user-select: none;
+    }
+
+    .cart_item_quantity input {
+        width: 40px;
+        height: 25px;
+        text-align: center;
+        border: 1px solid #eee;
+        margin: 0 5px;
+    }
+
+    .cart_item_remove {
+        display: flex;
+        align-items: center;
+        color: #999;
+        cursor: pointer;
+        margin-left: 10px;
+    }
+
+    .cart_summary {
+        padding-top: 20px;
+    }
+
+    .cart_total {
+        display: flex;
+        justify-content: space-between;
+        font-size: 18px;
+        font-weight: bold;
+        margin-bottom: 20px;
+    }
+
+    .checkout_btn {
+        display: block;
+        width: 100%;
+        padding: 12px 0;
+        text-align: center;
+        background-color: #fe4c50;
+        color: white;
+        font-weight: bold;
+        margin-bottom: 10px;
+        transition: background-color 0.3s;
+    }
+
+
+    .checkout_btn:hover {
+        background-color: #e83b3e;
+        color: white;
+    }
+
+    /* Overlay for background when cart is open */
+    .cart_backdrop {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: 999;
+        display: none;
+    }
+
+    .cart_backdrop.active {
+        display: block;
+    }
+</style>
+
+<div class="cart_overlay">
+    <div class="cart_overlay_content">
+        <div class="cart_overlay_header">
+            <h3>Your Cart</h3>
+            <div class="cart_overlay_close"><i class="fa fa-times"></i></div>
+        </div>
+        {% include "cart/cart_item_details.html" %}
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        if (!document.querySelector('.cart_backdrop')) {
+            const backdrop = document.createElement('div');
+            backdrop.className = 'cart_backdrop';
+            document.body.appendChild(backdrop);
+        }
+        const cartTrigger = document.querySelector('.cart_trigger');
+        const cartOverlay = document.querySelector('.cart_overlay');
+        const cartClose = document.querySelector('.cart_overlay_close');
+        const backdrop = document.querySelector('.cart_backdrop');
+
+        if (cartTrigger) {
+            cartTrigger.addEventListener('click', function (e) {
+                e.preventDefault();
+                loadCartItems();
+                cartOverlay.classList.add('active');
+                backdrop.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            });
+        }
+
+        if (cartClose) {
+            cartClose.addEventListener('click', function () {
+                cartOverlay.classList.remove('active');
+                backdrop.classList.remove('active');
+                document.body.style.overflow = '';
+            });
+        }
+
+        if (backdrop) {
+            backdrop.addEventListener('click', function () {
+                cartOverlay.classList.remove('active');
+                backdrop.classList.remove('active');
+                document.body.style.overflow = '';
+            });
+        }
+        cartOverlay.addEventListener('click', function (e) {
+            if (e.target.closest('.quantity_btn.minus')) {
+                const button = e.target.closest('.quantity_btn.minus');
+                const cartItem = button.closest('.cart_item');
+                const input = button.nextElementSibling;
+                let value = parseInt(input.value);
+                if (value > 1) {
+                    input.value = value - 1;
+                }
+                fetch('{% url "cart_update" %}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': '{{ csrf_token }}',
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    body: JSON.stringify({
+                        product_id: cartItem.dataset.productId,
+                        quantity: input.value
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    loadCartItems();
+                });
+            }
+
+            if (e.target.closest('.quantity_btn.plus')) {
+                const button = e.target.closest('.quantity_btn.plus');
+                const cartItem = button.closest('.cart_item');
+                const input = button.previousElementSibling;
+                let value = parseInt(input.value);
+                input.value = value + 1;
+                fetch('{% url "cart_update" %}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': '{{ csrf_token }}',
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    body: JSON.stringify({
+                        product_id: cartItem.dataset.productId,
+                        quantity: input.value
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    loadCartItems();
+                });
+            }
+
+            if (e.target.closest('.cart_item_remove')) {
+                const removeBtn = e.target.closest('.cart_item_remove');
+                const cartItem = removeBtn.closest('.cart_item');
+
+                fetch('{% url "cart_delete" %}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': '{{ csrf_token }}',
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    body: JSON.stringify({
+                        product_id: cartItem.dataset.productId
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    loadCartItems();
+                });
+            }
+        });
+    });
+
+    function loadCartItems() {
+        fetch('{% url "cart_detail" %}', {
+            method: 'GET',
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+            .then(response => response.json())
+            .then(data => {
+                var cartOverlay = document.querySelector('.cart_overlay');
+                if (cartOverlay && data.html) {
+                    var cartItems = cartOverlay.querySelector('.cart_items');
+                    if (cartItems) {
+                        cartItems.outerHTML = data.html;
+                    }
+                }
+                document.getElementById('checkout_items').textContent = data.cart_count;
+            });
+    }
+</script>

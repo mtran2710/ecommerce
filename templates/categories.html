@@ -1,0 +1,294 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<title>Colo Shop Categories</title>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="description" content="Techie Shop Template">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap4/bootstrap.min.css' %}">
+	<link rel="stylesheet" type="text/css" href="{% static 'plugins/font-awesome-4.7.0/css/font-awesome.min.css' %}">
+	<link rel="stylesheet" type="text/css" href="{% static 'plugins/OwlCarousel2-2.2.1/owl.carousel.css' %}">
+	<link rel="stylesheet" type="text/css" href="{% static 'plugins/OwlCarousel2-2.2.1/owl.theme.default.css' %}">
+	<link rel="stylesheet" type="text/css" href="{% static 'plugins/OwlCarousel2-2.2.1/animate.css' %}">
+	<link rel="stylesheet" type="text/css" href="{% static 'plugins/jquery-ui-1.12.1.custom/jquery-ui.css' %}">
+	<link rel="stylesheet" type="text/css" href="{% static 'css/categories_styles.css' %}">
+	<link rel="stylesheet" type="text/css" href="{% static 'css/categories_responsive.css' %}">
+
+</head>
+
+<body>
+
+	<div class="super_container">
+
+		<!-- Header -->
+
+		{% include 'navbar.html' %}
+
+		<div class="container product_section_container">
+			<div class="row">
+				<div class="col product_section clearfix">
+
+					<!-- Breadcrumbs -->
+
+					<div class="breadcrumbs d-flex flex-row align-items-center">
+						<ul>
+							<li><a href="{% url 'home' %}">Home</a></li>
+							<li class="active"><a href=""><i class="fa fa-angle-right" aria-hidden="true"></i>
+									{% if selected_category %}
+									{{ selected_category }}
+									{% else %}
+									All Products
+									{% endif %}</a></li>
+						</ul>
+					</div>
+
+					<!-- Sidebar -->
+
+					<div class="sidebar">
+						<div class="sidebar_section">
+							<div class="sidebar_title">
+								<h5>Product Category</h5>
+							</div>
+							<ul class="sidebar_categories">
+								<li {% if not selected_category %}class="active" {% endif %}>
+									<a href="{% url 'all_categories' %}">
+										{% if not selected_category %}<span><i class="fa fa-angle-double-right"
+												aria-hidden="true"></i></span>
+										{% endif %}
+										All Products
+									</a>
+								</li>
+								{% for category in categories %}
+								{% if selected_category == category.name %}
+								<li class="active"> <a href="{% url 'category' category.name %}"><span><i
+												class="fa fa-angle-double-right" aria-hidden="true"></i></span>
+										{{category.name }}</a> </li>
+								{% else %}
+								<li> <a href="{% url 'category' category.name %}">{{ category.name }}</a> </li>
+								{% endif %}
+								{% endfor %}
+							</ul>
+						</div>
+
+						<!-- Price Range Filtering -->
+						<div class="sidebar_section">
+							<div class="sidebar_title">
+								<h5>Filter by Price</h5>
+							</div>
+							<p>
+								<input type="text" id="amount" readonly
+									style="border:0; color:#f6931f; font-weight:bold;">
+							</p>
+							<div id="slider-range"></div>
+							<div class="filter_button"><span>filter</span></div>
+						</div>
+					</div>
+
+					<!-- Main Content -->
+
+					<div class="main_content">
+
+						<!-- Products -->
+
+						<div class="products_iso">
+							<div class="row">
+								<div class="col">
+
+									<!-- Product Sorting -->
+
+									<div class="product_sorting_container product_sorting_container_top">
+										<ul class="product_sorting">
+											<li>
+												<span class="type_sorting_text">Default Sorting</span>
+												<i class="fa fa-angle-down"></i>
+												<ul class="sorting_type">
+													<li class="type_sorting_btn"
+														data-isotope-option='{ "sortBy": "original-order" }'>
+														<span>Default Sorting</span>
+													</li>
+													<li class="type_sorting_btn"
+														data-isotope-option='{ "sortBy": "price" }'><span>Price</span>
+													</li>
+													<li class="type_sorting_btn"
+														data-isotope-option='{ "sortBy": "name" }'><span>Product
+															Name</span></li>
+												</ul>
+											</li>
+											<li>
+												<span>Show</span>
+												<span class="num_sorting_text">6</span>
+												<i class="fa fa-angle-down"></i>
+												<ul class="sorting_num">
+													<li class="num_sorting_btn"><span>6</span></li>
+													<li class="num_sorting_btn"><span>12</span></li>
+													<li class="num_sorting_btn"><span>24</span></li>
+												</ul>
+											</li>
+										</ul>
+										<div class="pages d-flex flex-row align-items-center">
+											<div class="page_current">
+												<span>1</span>
+												<ul class="page_selection">
+													<li><a href="#">1</a></li>
+													<li><a href="#">2</a></li>
+													<li><a href="#">3</a></li>
+												</ul>
+											</div>
+											<div class="page_total"><span>of</span> 3</div>
+											<div id="next_page" class="page_next"><a href="#"><i
+														class="fa fa-long-arrow-right" aria-hidden="true"></i></a></div>
+										</div>
+
+									</div>
+
+									<!-- Product Grid -->
+
+									<div class="product-grid">
+										{% for product in products %}
+										<div class="product-item men">
+											<div class="product discount product_filter">
+												<div class="product_image">
+													<img src="{{ product.images.first.image.url }}" alt="">
+												</div>
+												<div class="favorite favorite_left" title="Add to wishlist"></div>
+												{% if product.is_discounted %}
+												<div
+													class="product_bubble product_bubble_right product_bubble_red d-flex flex-column align-items-center">
+													<span>-{{ product.discount_percent}}%</span>
+												</div>
+												{% endif %}
+												<div class="product_info">
+													<h6 class="product_name"><a href="{% url 'product' product.id %}">
+															{{ product.name }}</a></h6>
+													<div class="product_price">${{ product.display_price }}
+														{% if product.is_discounted %}
+														<span>${{ product.price_original }}</span>
+														{% endif %}
+													</div>
+												</div>
+											</div>
+											<div class="red_button add_to_cart_button add-to-cart"
+												value="{{ product.id }}"><a href="#">add to cart</a></div>
+										</div>
+										{% endfor %}
+									</div>
+
+									<!-- Product Sorting -->
+
+									<div class="product_sorting_container product_sorting_container_bottom clearfix">
+										<ul class="product_sorting">
+											<li>
+												<span>Show:</span>
+												<span class="num_sorting_text">04</span>
+												<i class="fa fa-angle-down"></i>
+												<ul class="sorting_num">
+													<li class="num_sorting_btn"><span>01</span></li>
+													<li class="num_sorting_btn"><span>02</span></li>
+													<li class="num_sorting_btn"><span>03</span></li>
+													<li class="num_sorting_btn"><span>04</span></li>
+												</ul>
+											</li>
+										</ul>
+										<span class="showing_results">Showing 1–3 of 12 results</span>
+										<div class="pages d-flex flex-row align-items-center">
+											<div class="page_current">
+												<span>1</span>
+												<ul class="page_selection">
+													<li><a href="#">1</a></li>
+													<li><a href="#">2</a></li>
+													<li><a href="#">3</a></li>
+												</ul>
+											</div>
+											<div class="page_total"><span>of</span> 3</div>
+											<div id="next_page_1" class="page_next"><a href="#"><i
+														class="fa fa-long-arrow-right" aria-hidden="true"></i></a></div>
+										</div>
+
+									</div>
+
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		{% include 'footer.html' %}
+
+	</div>
+
+	<script src="{% static 'js/jquery-3.2.1.min.js' %}"></script>
+	<script src="{% static 'js/popper.min.js' %}"></script>
+	<script src="{% static 'js/bootstrap.min.js' %}"></script>
+	<script src="{% static 'plugins/Isotope/isotope.pkgd.min.js' %}"></script>
+	<script src="{% static 'plugins/OwlCarousel2-2.2.1/owl.carousel.js' %}"></script>
+	<script src="{% static 'plugins/easing/easing.js' %}"></script>
+	<script src="{% static 'plugins/jquery-ui-1.12.1.custom/jquery-ui.js' %}"></script>
+	<script src="{% static 'js/categories_custom.js' %}"></script>
+	<script>
+		document.querySelectorAll('.add-to-cart').forEach(function (addToCartButton) {
+			addToCartButton.addEventListener('click', function (event) {
+				event.preventDefault();
+				var productId = this.getAttribute('value');
+
+				fetch('{% url "cart_add" %}', {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json',
+						'X-CSRFToken': '{{ csrf_token }}',
+						'X-Requested-With': 'XMLHttpRequest'
+					},
+					body: JSON.stringify({
+						'product_id': productId
+					})
+				})
+					.then(response => response.json())
+					.then(data => {
+						if (data.success) {
+							alert('Product added to cart!');
+
+							var cartOverlay = document.querySelector('.cart_overlay');
+							if (cartOverlay) {
+								loadCartItems();
+								cartOverlay.classList.add('active');
+								document.body.style.overflow = 'hidden';
+							}
+						} else {
+							alert(data.error || 'Failed to add product to cart');
+						}
+					})
+					.catch(error => {
+						console.error('Error:', error);
+						alert('An error occurred while adding to cart');
+					});
+			});
+		});
+
+		function loadCartItems() {
+			fetch('{% url "cart_detail" %}', {
+				method: 'GET',
+				headers: {
+					'X-Requested-With': 'XMLHttpRequest'
+				}
+			})
+				.then(response => response.json())
+				.then(data => {
+					var cartOverlay = document.querySelector('.cart_overlay');
+					if (cartOverlay && data.html) {
+						var cartItems = cartOverlay.querySelector('.cart_items');
+						if (cartItems) {
+							cartItems.outerHTML = data.html;
+						}
+					}
+					document.getElementById('checkout_items').textContent = data.cart_count;
+				});
+		}
+	</script>
+</body>
+
+</html>

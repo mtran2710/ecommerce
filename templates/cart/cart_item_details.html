@@ -1,0 +1,34 @@
+<div class="cart_items">
+    {% if cart_products %}
+        {% for item in cart_products %}
+        <div class="cart_item" data-product-id="{{ item.product.id }}">
+            <div class="cart_item_image">
+                <img src="{{ item.product.images.first.image.url }}" alt="">
+            </div>
+            <div class="cart_item_info">
+                <div class="cart_item_name">{{ item.product.name }}</div>
+                <div class="cart_item_price">${{ item.product.display_price }}</div>
+                <div class="cart_item_quantity">
+                    <span class="quantity_btn minus">-</span>
+                    <input type="text" value="{{ item.quantity }}" readonly>
+                    <span class="quantity_btn plus">+</span>
+                </div>
+            </div>
+            <div class="cart_item_remove">
+                <i class="fa fa-trash"></i>
+            </div>
+        </div>
+        {% endfor %}
+        <div class="cart_summary">
+            <div class="cart_total">
+                <span>Total:</span>
+                <span class="cart_total_amount">${{ total }}</span>
+            </div>
+            <a href="{% url 'checkout' %}" class="checkout_btn">Proceed to Checkout</a>
+        </div>
+    {% else %}
+        <div class="cart_empty">
+            <p>Your cart is empty.</p>
+        </div>
+    {% endif %}
+</div>
