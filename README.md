@@ -1,19 +1,17 @@
 # Django E-commerce Application
 
-This is a full-featured Django e-commerce application with Docker support, PostgreSQL database, and SQLite for development.
+This is a full-featured Django e-commerce application with Docker support, PostgreSQL database, S3 for media strorage and Prometheus for monitoring.
 
 ## Features
 
-- Product catalog with categories
-- Product detail pages
 - Docker containerization for easy development
 - PostgreSQL database support
 - Responsive design with Bootstrap 4
 
 ## Requirements
 
-- Python 3.8+
-- Django 3.2+
+- Python 3.10+
+- Django 5.2+
 - Docker and Docker Compose (for containerized development)
 
 ## Local Development Setup
