@@ -55,6 +55,10 @@ DATABASE_PASSWORD=dbpassword
 DATABASE_HOST=db
 DATABASE_PORT=5432
 
+# AWS S3 settings
+AWS_ACCESS_KEY_ID=your-access-key-id
+AWS_SECRET_ACCESS_KEY=your-secret-access-key
+
 # Default superuser (optional)
 DJANGO_SUPERUSER_USERNAME=admin
 DJANGO_SUPERUSER_EMAIL=admin@example.com
